@@ -29,6 +29,6 @@ vim.opt.smartcase =true
 vim.opt.termguicolors = true
 
 vim.opt.showmode = false
-
+vim.opt.clipboard = "unnamedplus"
 -- No automatic comment insertion
 vim.cmd([[autocmd FileType * set formatoptions-=ro]])
