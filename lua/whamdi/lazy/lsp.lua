@@ -1,51 +1,54 @@
 return {
   {
-    "williamboman/mason.nvim",
-    build = ":MasonUpdate",
-    config = function()
-      require("mason").setup()
-    end,
-  },
-
-  {
-    "williamboman/mason-lspconfig.nvim",
-    dependencies = { "williamboman/mason.nvim" },
-    config = function()
-      require("mason-lspconfig").setup({
-        ensure_installed = {
-          "lua_ls",
-          "ts_ls",
-          "pyright",
-        },
-      })
-    end,
-  },
-
-  {
-    "neovim/nvim-lspconfig", -- encore requis mais plus pour config
+    "neovim/nvim-lspconfig",
     config = function()
       -- capabilities pour nvim-cmp
       local capabilities = vim.lsp.protocol.make_client_capabilities()
-      local cmp_ok, cmp_lsp = pcall(require, "cmp_nvim_lsp")
-      if cmp_ok then
+      local ok, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+      if ok then
         capabilities = cmp_lsp.default_capabilities(capabilities)
       end
 
-      local servers = { "lua_ls", "ts_ls", "pyright" }
+      -- diagnostics UI
+      vim.diagnostic.config({
+        virtual_text = true,
+        signs = true,
+        underline = true,
+        update_in_insert = false,
+        severity_sort = true,
+      })
 
-      for _, server in ipairs(servers) do
-        vim.lsp.config[server] = {
-          capabilities = capabilities,
-          settings = (server == "lua_ls") and {
-            Lua = {
-              diagnostics = { globals = { "vim" } },
-            },
-          } or nil,
-        }
+      vim.api.nvim_create_autocmd("CursorHold", {
+        callback = function()
+          vim.diagnostic.open_float(nil, { focus = false })
+        end,
+      })
 
-        -- lance automatiquement le client
-        vim.lsp.start(vim.lsp.config[server])
-      end
+      -----------------------------------------------------------
+      -- 🚀 Nouvelle API 0.11 (plus de lspconfig.setup)
+      -----------------------------------------------------------
+
+      vim.lsp.config.lua_ls = {
+        capabilities = capabilities,
+        settings = {
+          Lua = {
+            diagnostics = { globals = { "vim" } },
+          },
+        },
+      }
+
+      vim.lsp.config.ts_ls = {
+        capabilities = capabilities,
+      }
+
+      vim.lsp.config.pyright = {
+        capabilities = capabilities,
+      }
+
+      -- démarre les serveurs automatiquement
+      vim.lsp.enable("lua_ls")
+      vim.lsp.enable("ts_ls")
+      vim.lsp.enable("pyright")
     end,
   },
 }
