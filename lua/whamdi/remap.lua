@@ -1,7 +1,7 @@
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
-vim.keymap.set("n", "gd", "G", { desc = "Go to bottom of file" })
+vim.keymap.set("n", "gl", "G", { desc = "Go to bottom of file" })
 vim.keymap.set("n", "gu", "gg", { desc = "Go to top of file" })
 -- switch insert mode to normal mode with jk
 vim.keymap.set("i", "jk", "<Esc>", { desc = "Exit insert mode with jk" })
